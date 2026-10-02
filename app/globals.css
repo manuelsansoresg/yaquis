@@ -17,7 +17,12 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  background: radial-gradient(circle at 8% 15%, rgba(31, 68, 93, .2), transparent 27rem), var(--navy-950);
+  background:
+    linear-gradient(rgba(19, 43, 62, .12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(19, 43, 62, .1) 1px, transparent 1px),
+    radial-gradient(circle at 8% 15%, rgba(31, 68, 93, .2), transparent 27rem),
+    var(--navy-950);
+  background-size: 36px 36px, 36px 36px, auto, auto;
   color: var(--ink);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -25,7 +30,7 @@ body {
 a { color: inherit; text-decoration: none; }
 button, select, input, textarea { font: inherit; }
 ::selection { background: var(--green); color: #07131f; }
-.container-shell { width: min(100% - 2rem, 1450px); margin-inline: auto; }
+.container-shell { width: min(100% - 2rem, 1480px); margin-inline: auto; }
 .display-font { font-family: "Arial Narrow", "Roboto Condensed", Impact, sans-serif; }
 .green { color: var(--green); }
 .muted { color: var(--muted); }
@@ -33,7 +38,7 @@ button, select, input, textarea { font: inherit; }
 .surface {
   background: linear-gradient(145deg, rgba(15, 34, 51, .98), rgba(8, 24, 38, .98));
   border: 1px solid var(--line);
-  border-radius: .7rem;
+  border-radius: .45rem;
   box-shadow: 0 14px 38px rgba(0, 0, 0, .18);
   overflow: hidden;
 }
@@ -43,8 +48,8 @@ button, select, input, textarea { font: inherit; }
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  min-height: 3.9rem;
-  padding: 1rem 1.25rem;
+  min-height: 3.25rem;
+  padding: .72rem 1rem;
   background: rgba(18, 43, 62, .78);
   border-bottom: 1px solid var(--line);
 }
@@ -54,7 +59,7 @@ button, select, input, textarea { font: inherit; }
   align-items: center;
   gap: .7rem;
   font-family: "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
-  font-size: 1.25rem;
+  font-size: 1.08rem;
   font-weight: 800;
   letter-spacing: .055em;
 }
