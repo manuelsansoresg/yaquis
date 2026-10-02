@@ -1,0 +1,7 @@
+import type { Metadata } from "next";
+import { TopScorers } from "@/components/home-sections";
+import { PageHero } from "@/components/page-hero";
+import { Goal, Medal, Target } from "lucide-react";
+
+export const metadata: Metadata = { title: "Goleadores" };
+export default function GoleadoresPage() { return <><PageHero kicker="Estadísticas individuales" title="Goleadores" description="Los jugadores con mayor contundencia de cara al arco en la temporada 2026." /><div className="container-shell page-content grid gap-5 lg:grid-cols-[1fr_.4fr]"><TopScorers full /><aside className="surface h-fit p-6"><div className="grid h-14 w-14 place-items-center rounded-full bg-[#73e82d]/12"><Medal className="h-7 w-7 text-[#73e82d]" /></div><h2 className="display-font mb-2 mt-5 text-3xl font-black">GOLEADOR DE LA JORNADA</h2><p className="text-sm leading-6 text-[#91a6b4]">Carlos Martínez mantiene el liderato con 14 goles y un promedio de 2 anotaciones por partido.</p><div className="mt-5 grid grid-cols-2 gap-3"><div className="rounded-lg border border-[#294052] bg-[#0a1b2a] p-4"><Goal className="mb-2 h-5 w-5 text-[#73e82d]" /><strong className="display-font text-3xl">14</strong><span className="block text-[.65rem] text-[#8297a6]">GOLES</span></div><div className="rounded-lg border border-[#294052] bg-[#0a1b2a] p-4"><Target className="mb-2 h-5 w-5 text-[#73e82d]" /><strong className="display-font text-3xl">7</strong><span className="block text-[.65rem] text-[#8297a6]">PARTIDOS</span></div></div></aside></div></>; }

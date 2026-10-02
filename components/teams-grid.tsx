@@ -1,0 +1,7 @@
+import { ShieldCheck, Trophy, Users } from "lucide-react";
+import { standings, teams } from "@/data/league";
+import { TeamCrest } from "./team-crest";
+
+export function TeamsGrid() {
+  return <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{teams.map((team) => { const standing = standings.find((row) => row.team === team.name); return <article key={team.name} className="surface group p-5 transition hover:-translate-y-1 hover:border-[#73e82d]/60"><div className="flex items-center gap-4"><TeamCrest name={team.name} size="lg" /><div><p className="mb-1 text-[.66rem] font-black uppercase tracking-[.13em] text-[#73e82d]">División A</p><h2 className="display-font m-0 text-2xl font-black leading-none">{team.name}</h2></div></div><div className="mt-5 grid grid-cols-3 divide-x divide-[#294052] border-t border-[#294052] pt-4 text-center"><div><Trophy className="mx-auto mb-1 h-4 w-4 text-[#708898]" /><strong className="display-font text-lg">{standing?.pts ?? 0}</strong><span className="block text-[.6rem] text-[#708898]">PTS</span></div><div><ShieldCheck className="mx-auto mb-1 h-4 w-4 text-[#708898]" /><strong className="display-font text-lg">{standing?.g ?? 0}</strong><span className="block text-[.6rem] text-[#708898]">GANADOS</span></div><div><Users className="mx-auto mb-1 h-4 w-4 text-[#708898]" /><strong className="display-font text-lg">14</strong><span className="block text-[.6rem] text-[#708898]">JUGADORES</span></div></div></article>; })}</div>;
+}
