@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { CalendarDays, Goal, Home, Menu, Shield, Table2, UserPlus, Users, X } from "lucide-react";
+import { CalendarDays, Goal, Home, Menu, Shield, Table2, UserPlus, Users, UsersRound, X } from "lucide-react";
 import { Logo } from "./logo";
 
 const navItems = [
@@ -12,6 +12,7 @@ const navItems = [
   { label: "Posiciones", href: "/posiciones", icon: Table2 },
   { label: "Goleadores", href: "/goleadores", icon: Goal },
   { label: "Equipos", href: "/equipos", icon: Users },
+  { label: "Plantillas", href: "/plantillas", icon: UsersRound },
   { label: "Inscripciones", href: "/inscripciones", icon: UserPlus },
 ];
 
@@ -21,7 +22,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#294052] bg-[#06111f]/96 backdrop-blur-xl">
-      <div className="container-shell grid min-h-[88px] grid-cols-[1fr_auto] items-center gap-x-5 min-[900px]:min-h-[126px] min-[900px]:grid-cols-[355px_1fr] min-[900px]:grid-rows-[48px_78px]">
+      <div className="container-shell grid min-h-[88px] grid-cols-[1fr_auto] items-center gap-x-5 min-[900px]:min-h-[126px] min-[900px]:grid-cols-[320px_1fr] min-[900px]:grid-rows-[48px_78px] xl:grid-cols-[355px_1fr]">
         <Link href="/" aria-label="Liga Yaquis, inicio" onClick={() => setOpen(false)} className="min-[900px]:row-span-2"><Logo /></Link>
         <div className="hidden items-center justify-end gap-3 min-[900px]:flex">
           <label className="sr-only" htmlFor="season">Temporada</label>
@@ -35,7 +36,7 @@ export function Header() {
           {navItems.map(({ label, href, icon: Icon }) => {
             const active = pathname === href;
             return (
-              <Link key={href} href={href} className={`group relative flex min-w-[88px] flex-col items-center justify-center gap-1 px-2 text-[.73rem] font-medium transition ${active ? "text-[#73e82d]" : "text-white hover:text-[#73e82d]"}`}>
+              <Link key={href} href={href} className={`group relative flex min-w-[72px] flex-col items-center justify-center gap-1 px-2 text-[.73rem] font-medium transition xl:min-w-[88px] ${active ? "text-[#73e82d]" : "text-white hover:text-[#73e82d]"}`}>
                 <Icon className="h-[22px] w-[22px]" strokeWidth={2.4} />{label}
                 <span className={`absolute inset-x-0 bottom-0 h-[4px] bg-[#73e82d] transition ${active ? "opacity-100" : "opacity-0 group-hover:opacity-40"}`} />
               </Link>
