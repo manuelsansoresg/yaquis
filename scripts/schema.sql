@@ -1,0 +1,56 @@
+CREATE TABLE IF NOT EXISTS users (
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(120) NOT NULL, email VARCHAR(190) NOT NULL UNIQUE,
+ password_hash VARCHAR(255) NOT NULL, role ENUM('admin','user') NOT NULL DEFAULT 'user', active BOOLEAN NOT NULL DEFAULT TRUE,
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS sessions (
+ token_hash CHAR(64) PRIMARY KEY, user_id INT UNSIGNED NOT NULL, expires_at DATETIME NOT NULL,
+ FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS rate_limits (
+ bucket CHAR(64) PRIMARY KEY, attempts INT NOT NULL DEFAULT 1, expires_at DATETIME NOT NULL
+);
+CREATE TABLE IF NOT EXISTS catalogs (
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, kind ENUM('division','category','season','venue','position') NOT NULL,
+ name VARCHAR(120) NOT NULL, active BOOLEAN NOT NULL DEFAULT TRUE, UNIQUE KEY kind_name(kind,name)
+);
+CREATE TABLE IF NOT EXISTS media (
+ id CHAR(36) PRIMARY KEY, mime VARCHAR(40) NOT NULL, content MEDIUMBLOB NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS teams (
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(120) NOT NULL UNIQUE, short VARCHAR(10) NOT NULL,
+ division_id INT UNSIGNED NOT NULL, category_id INT UNSIGNED NOT NULL, season_id INT UNSIGNED NOT NULL,
+ coach VARCHAR(120) NOT NULL DEFAULT '', manager VARCHAR(120) NOT NULL DEFAULT '', logo_id CHAR(36),
+ color1 CHAR(7) NOT NULL DEFAULT '#73e82d', color2 CHAR(7) NOT NULL DEFAULT '#102b49', active BOOLEAN NOT NULL DEFAULT TRUE,
+ FOREIGN KEY(division_id) REFERENCES catalogs(id), FOREIGN KEY(category_id) REFERENCES catalogs(id), FOREIGN KEY(season_id) REFERENCES catalogs(id), FOREIGN KEY(logo_id) REFERENCES media(id)
+);
+CREATE TABLE IF NOT EXISTS players (
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, team_id INT UNSIGNED NOT NULL, name VARCHAR(120) NOT NULL,
+ number INT UNSIGNED NOT NULL, position_id INT UNSIGNED NOT NULL, active BOOLEAN NOT NULL DEFAULT TRUE,
+ UNIQUE KEY team_number(team_id,number), FOREIGN KEY(team_id) REFERENCES teams(id), FOREIGN KEY(position_id) REFERENCES catalogs(id)
+);
+CREATE TABLE IF NOT EXISTS matches (
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, home_id INT UNSIGNED NOT NULL, away_id INT UNSIGNED NOT NULL,
+ venue_id INT UNSIGNED NOT NULL, kickoff DATETIME NOT NULL, round INT UNSIGNED NOT NULL,
+ status ENUM('scheduled','played','cancelled') NOT NULL DEFAULT 'scheduled', home_score INT UNSIGNED, away_score INT UNSIGNED,
+ FOREIGN KEY(home_id) REFERENCES teams(id), FOREIGN KEY(away_id) REFERENCES teams(id), FOREIGN KEY(venue_id) REFERENCES catalogs(id),
+ CHECK(home_id <> away_id), CHECK((status = 'played' AND home_score IS NOT NULL AND away_score IS NOT NULL) OR (status <> 'played' AND home_score IS NULL AND away_score IS NULL))
+);
+CREATE TABLE IF NOT EXISTS match_goals (
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, match_id INT UNSIGNED NOT NULL, player_id INT UNSIGNED NOT NULL, goals INT UNSIGNED NOT NULL,
+ UNIQUE KEY match_player(match_id,player_id), FOREIGN KEY(match_id) REFERENCES matches(id), FOREIGN KEY(player_id) REFERENCES players(id), CHECK(goals > 0)
+);
+CREATE TABLE IF NOT EXISTS registrations (
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, team_name VARCHAR(120) NOT NULL, manager VARCHAR(120) NOT NULL,
+ email VARCHAR(190) NOT NULL, phone VARCHAR(30) NOT NULL, category_id INT UNSIGNED NOT NULL, division_id INT UNSIGNED NOT NULL,
+ season_id INT UNSIGNED NOT NULL, player_count INT UNSIGNED NOT NULL, logo_id CHAR(36),
+ status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending', team_id INT UNSIGNED,
+ active_team_name VARCHAR(120) GENERATED ALWAYS AS (CASE WHEN status IN ('pending','approved') THEN team_name ELSE NULL END) STORED,
+ UNIQUE KEY active_registration(active_team_name,season_id),
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY(category_id) REFERENCES catalogs(id), FOREIGN KEY(division_id) REFERENCES catalogs(id), FOREIGN KEY(season_id) REFERENCES catalogs(id), FOREIGN KEY(logo_id) REFERENCES media(id), FOREIGN KEY(team_id) REFERENCES teams(id)
+);
+CREATE TABLE IF NOT EXISTS news (
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, tag VARCHAR(80) NOT NULL, title VARCHAR(180) NOT NULL, copy TEXT NOT NULL,
+ published_on DATE NOT NULL, active BOOLEAN NOT NULL DEFAULT TRUE
+);

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/header";
+import { getLeague } from "@/lib/league";
+import { currentUser } from "@/lib/auth";
 import { Footer } from "@/components/footer";
 
 export const metadata: Metadata = {
@@ -13,11 +15,18 @@ export const metadata: Metadata = {
   icons: { icon: "/favicon.svg" },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const dynamic = "force-dynamic";
+
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [data, user] = await Promise.all([getLeague(), currentUser()]);
   return (
     <html lang="es">
       <body>
-        <Header />
+        <Header seasons={data.seasons} seasonId={data.seasonId} user={user} />
         <main>{children}</main>
         <Footer />
       </body>

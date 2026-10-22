@@ -171,3 +171,33 @@ button, select, input, textarea { font: inherit; }
   .roster-table { font-size: .73rem; }
   .roster-table td, .roster-table th { padding-inline: .4rem; }
 }
+
+/* Administración y formularios */
+.admin-heading { display:flex; justify-content:space-between; align-items:center; gap:1.5rem; margin-bottom:2rem; }
+.admin-stats {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin-bottom:1.5rem;}
+.admin-layout {display:grid;grid-template-columns:220px minmax(0,1fr);gap:1rem;align-items:start;}
+.admin-nav {padding:.5rem;display:grid;gap:.25rem;}
+.admin-nav button {display:flex;justify-content:space-between;text-align:left;padding:.9rem;border-radius:.3rem;cursor:pointer;border:0;background:transparent;color:var(--ink);font-size:.85rem;}
+.admin-nav button.selected {background:#73e82d18;color:var(--green);}
+.admin-nav span {color:var(--muted);}
+.admin-form {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;padding:1.25rem;margin-bottom:1.5rem;border:1px solid var(--line);border-radius:.4rem;background:#071522;}
+.form-fields {display:grid;gap:1.1rem;}
+.admin-form label,.form-fields label {display:grid;gap:.5rem;font-size:.8rem;color:#b5c8d5;}
+.admin-form input,.admin-form select,.admin-form textarea,.form-fields input,.form-fields select {width:100%;min-width:0;border:1px solid #365164;border-radius:.35rem;background:#0d2334;color:white;padding:.8rem;outline:none;color-scheme:dark;}
+.admin-form input:focus,.admin-form select:focus,.admin-form textarea:focus,.form-fields input:focus,.form-fields select:focus {border-color:var(--green);}
+.admin-form input[type=checkbox] {width:1.3rem;height:1.3rem;accent-color:var(--green);}
+.admin-form input[type=color] {height:3rem;}
+.admin-form textarea {min-height:120px;}
+.form-error,.form-success {padding:1rem;border:1px solid #e8787855;border-radius:.4rem;background:#e8787810;color:#ffb2b2;font-size:.85rem;margin-bottom:1rem;}
+.form-success {border-color:#73e82d55;background:#73e82d10;color:#9bed6b;}
+.admin-table {width:100%;text-align:left;border-collapse:collapse;font-size:.8rem;}
+.admin-table th {color:var(--muted);font-size:.7rem;text-transform:uppercase;padding:.8rem;}
+.admin-table td {padding:1rem .8rem;border-top:1px solid var(--line);vertical-align:top;}
+.admin-action {padding:.45rem .65rem;border:1px solid #365164;border-radius:.3rem;white-space:nowrap;cursor:pointer;color:var(--green);font-size:.75rem;}
+.admin-action.danger {color:#ffb2b2;}
+button {cursor:pointer;}
+button:disabled {opacity:.5;cursor:wait;}
+@media(max-width:850px){.admin-heading{align-items:start;flex-direction:column;}.admin-stats{grid-template-columns:repeat(2,minmax(0,1fr));}.admin-layout{grid-template-columns:1fr;}.admin-nav{display:flex;overflow-x:auto;}.admin-nav button{white-space:nowrap;gap:1rem;}}
+
+@media(max-width:639px){.admin-form{grid-template-columns:1fr;}}
+.roster-divisions {flex-wrap:wrap;}

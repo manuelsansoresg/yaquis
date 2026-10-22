@@ -4,6 +4,24 @@ import { Rosters } from "@/components/rosters";
 
 export const metadata: Metadata = { title: "Plantillas" };
 
-export default function PlantillasPage() {
-  return <><PageHero kicker="Los protagonistas de la liga" title="Plantillas" description="Conoce a los jugadores de cada equipo de la liga." /><div className="container-shell page-content"><Rosters /></div></>;
+import { getLeague } from "@/lib/league";
+
+export default async function PlantillasPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ equipo?: string }>;
+}) {
+  const params = await searchParams;
+  return (
+    <>
+      <PageHero
+        kicker="Los protagonistas de la liga"
+        title="Plantillas"
+        description="Conoce a los jugadores de cada equipo de la liga."
+      />
+      <div className="container-shell page-content">
+        <Rosters data={await getLeague()} initialTeam={Number(params.equipo)} />
+      </div>
+    </>
+  );
 }
