@@ -238,14 +238,12 @@ async function mutate(request: Request, { params }: Context, remove = false) {
           "SELECT * FROM teams WHERE id IN (?,?) AND active=1",
           [data.home_id, data.away_id],
         );
-        if (
-          selected.length !== 2 ||
-          ["season_id", "category_id"].some(
-            (key) => selected[0][key] !== selected[1][key],
-          )
-        )
+        if (selected.length !== 2)
+          throw new InputError("Selecciona dos equipos activos válidos.");
+        // Groups/zones are stored as categories, so interzone matches may cross them.
+        if (selected[0].season_id !== selected[1].season_id)
           throw new InputError(
-            "Los equipos deben pertenecer a la misma temporada y categoría. Pueden ser de distintas divisiones para un partido interzona.",
+            "Los equipos deben pertenecer a la misma temporada. Pueden ser de distintos grupos, categorías o divisiones para un partido interzona.",
           );
         data.venue_id = await reference(body.venue_id, "venue");
         data.round = integer(body.round, "Jornada", 1, 999);

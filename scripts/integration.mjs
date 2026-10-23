@@ -125,11 +125,16 @@ try {
     name: marker + " interzona",
     active: true,
   });
+  const interzoneGroup = await create("catalogs", {
+    kind: "category",
+    name: marker + " grupo 2",
+    active: true,
+  });
   const away = await create("teams", {
     name: marker + " visitante",
     short: "QAV",
     division_id: interzoneDivision.id,
-    category_id: ref("category"),
+    category_id: interzoneGroup.id,
     season_id: ref("season"),
     active: true,
   });
@@ -152,7 +157,24 @@ try {
   });
   result = await request("/api/admin/matches", { ...match, away_id: home.id });
   assert.equal(result.response.status, 400);
-  for (const kind of ["season", "category"]) {
+  const sameDivisionAway = await create("teams", {
+    ...away,
+    id: undefined,
+    name: marker + " otro grupo misma división",
+    division_id: home.division_id,
+  });
+  const sameDivisionMatch = await create("matches", {
+    ...match,
+    id: undefined,
+    away_id: sameDivisionAway.id,
+    status: "scheduled",
+  });
+  result = await request("/api/admin/matches", {
+    ...sameDivisionMatch,
+    round: 2,
+  });
+  assert.equal(result.response.status, 200, "Permite editar un partido entre grupos");
+  for (const kind of ["season"]) {
     const other = await create("catalogs", {
       kind,
       name: marker + " " + kind,
@@ -170,6 +192,17 @@ try {
     });
     assert.equal(result.response.status, 400, `Rechaza distinta ${kind}`);
   }
+  const inactive = await create("teams", {
+    ...away,
+    id: undefined,
+    name: marker + " inactivo",
+    active: false,
+  });
+  for (const awayId of [inactive.id, 2147483647]) {
+    result = await request("/api/admin/matches", { ...match, away_id: awayId });
+    assert.equal(result.response.status, 400);
+    assert.equal(result.data.error, "Selecciona dos equipos activos válidos.");
+  }
   const goal = await create("match_goals", {
     match_id: match.id,
     player_id: player.id,
@@ -186,6 +219,9 @@ try {
     published_on: "2026-10-22",
     active: true,
   });
+  // The cross-season rejection test creates a newer season; keep public checks
+  // on the season whose match and statistics we are verifying.
+  const publicOptions = { headers: { Cookie: `liga_season=${home.season_id}` } };
   for (const path of [
     "/",
     "/equipos",
@@ -194,25 +230,21 @@ try {
     "/posiciones",
     "/goleadores",
   ]) {
-    const page = await fetch(base + path);
+    const page = await fetch(base + path, publicOptions);
     assert.equal(page.status, 200);
     assert.ok(
       (await page.text()).includes(marker),
       `Datos dinámicos en ${path}`,
     );
   }
-  const standingsHtml = await (await fetch(base + "/posiciones")).text();
-  const homeRow = standingsHtml.match(
-    new RegExp(
-      "<tr[^>]*>(?:(?!<\\/tr>)[\\s\\S])*?" +
-        marker +
-        " FC(?:(?!<\\/tr>)[\\s\\S])*?<\\/tr>",
-    ),
-  )?.[0];
+  const standingsHtml = await (await fetch(base + "/posiciones", publicOptions)).text();
+  const homeRow = standingsHtml
+    .match(/<tr\b[^>]*>[\s\S]*?<\/tr>/g)
+    ?.find((row) => row.includes(marker + " FC"));
   assert.ok(homeRow, "Fila pública del equipo");
   assert.ok(homeRow.includes(">3</td>"), "Tres puntos por victoria");
   assert.ok(homeRow.includes(">2</td>"), "Diferencia de goles 3-1");
-  const scorersHtml = await (await fetch(base + "/goleadores")).text();
+  const scorersHtml = await (await fetch(base + "/goleadores", publicOptions)).text();
   assert.ok(scorersHtml.includes(marker + " jugador"));
   assert.ok(scorersHtml.includes(">2<!-- -->"));
   const userPassword = randomBytes(16).toString("hex");
