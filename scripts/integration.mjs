@@ -120,10 +120,15 @@ try {
   const logo = await fetch(base + "/api/media/" + home.logo_id);
   assert.equal(logo.status, 200);
   assert.equal(logo.headers.get("content-type"), "image/png");
+  const interzoneDivision = await create("catalogs", {
+    kind: "division",
+    name: marker + " interzona",
+    active: true,
+  });
   const away = await create("teams", {
     name: marker + " visitante",
     short: "QAV",
-    division_id: ref("division"),
+    division_id: interzoneDivision.id,
     category_id: ref("category"),
     season_id: ref("season"),
     active: true,
@@ -147,6 +152,24 @@ try {
   });
   result = await request("/api/admin/matches", { ...match, away_id: home.id });
   assert.equal(result.response.status, 400);
+  for (const kind of ["season", "category"]) {
+    const other = await create("catalogs", {
+      kind,
+      name: marker + " " + kind,
+      active: true,
+    });
+    const incompatible = await create("teams", {
+      ...away,
+      id: undefined,
+      name: marker + " " + kind,
+      [`${kind}_id`]: other.id,
+    });
+    result = await request("/api/admin/matches", {
+      ...match,
+      away_id: incompatible.id,
+    });
+    assert.equal(result.response.status, 400, `Rechaza distinta ${kind}`);
+  }
   const goal = await create("match_goals", {
     match_id: match.id,
     player_id: player.id,

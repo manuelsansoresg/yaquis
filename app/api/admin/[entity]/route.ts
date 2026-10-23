@@ -240,12 +240,12 @@ async function mutate(request: Request, { params }: Context, remove = false) {
         );
         if (
           selected.length !== 2 ||
-          ["division_id", "season_id", "category_id"].some(
+          ["season_id", "category_id"].some(
             (key) => selected[0][key] !== selected[1][key],
           )
         )
           throw new InputError(
-            "Los equipos deben pertenecer a la misma temporada, división y categoría.",
+            "Los equipos deben pertenecer a la misma temporada y categoría. Pueden ser de distintas divisiones para un partido interzona.",
           );
         data.venue_id = await reference(body.venue_id, "venue");
         data.round = integer(body.round, "Jornada", 1, 999);

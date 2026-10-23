@@ -60,7 +60,7 @@ export function LeagueSection({
   );
   const ids = new Set(filteredTeams.map((t) => t.id));
   const matches = data.matches.filter(
-    (m) => ids.has(m.home_id) && ids.has(m.away_id),
+    (m) => ids.has(m.home_id) || ids.has(m.away_id),
   );
   const team = (id: number) => data.teams.find((t) => t.id === id);
   const filters = (
